@@ -1,0 +1,5 @@
+{
+  "name": "NextRead",
+  "description": "A personalized book affinity predictor that analyzes your reading history to predict how much you'll love your next read.",
+  "requestFramePermissions": []
+}
