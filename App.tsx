@@ -5,6 +5,7 @@ import { PredictView } from './components/PredictView';
 import { AddBookView } from './components/AddBookView';
 import { ImportView } from './components/ImportView';
 import { Library, Sparkles } from 'lucide-react';
+import { INITIAL_BOOKS } from './data/initialData';
 
 const STORAGE_KEY = 'nextread_library';
 
@@ -12,21 +13,32 @@ function App() {
   const [view, setView] = useState<AppView>(AppView.LIBRARY);
   const [books, setBooks] = useState<Book[]>([]);
 
-  // Load books from local storage on mount
+  // Load books from local storage on mount, or use initial data
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        setBooks(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (parsed.length > 0) {
+          setBooks(parsed);
+          return;
+        }
       } catch (e) {
         console.error("Failed to parse library", e);
       }
+    }
+    
+    // Fallback to initial data if provided and storage is empty
+    if (INITIAL_BOOKS.length > 0) {
+        setBooks(INITIAL_BOOKS);
     }
   }, []);
 
   // Save books whenever they change
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+    if (books.length > 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+    }
   }, [books]);
 
   const handleAddBook = (book: Book) => {
